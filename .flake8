@@ -1,0 +1,23 @@
+[flake8]
+extend-ignore =
+    E1
+    W1
+    E2
+    W2
+    E3
+    W3
+    E5
+    W5
+    E731
+    E721
+exclude =
+    .git,
+    __pycache__,
+    build/,
+    pdk/,
+    venv/,
+    test/designs/*.py,
+    examples,
+    _lef_parser_antlr/*
+per-file-ignores =
+    */__init__.py:F401

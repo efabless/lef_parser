@@ -1,0 +1,13 @@
+venv/
+.antlr/
+.vscode/
+_lef_parser_antlr/
+
+# python
+__pycache__
+/venv
+/dist
+*.egg-info
+/build
+.coverage
+htmlcov

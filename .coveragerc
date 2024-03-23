@@ -1,0 +1,10 @@
+[run]
+source = lef_parser
+
+[report]
+include =
+    lef_parser/*
+omit =
+    /nix/*
+    venv/*
+    */_antlr/*
