@@ -231,9 +231,7 @@ class Listener(lefListener):
     def enterPin_property(self, ctx: lefParser.Pin_propertyContext):
         directive = str(ctx.children[0])
         p = self.pin
-        if directive == "DIRECTION":
-            p.direction = str(ctx.children[1])
-        elif directive == "USE":
+        if directive == "USE":
             p.kind = str(ctx.children[1])
         elif directive == "ANTENNAGATEAREA":
             p.antennaGateArea = float(str(ctx.children[1]))
@@ -241,6 +239,14 @@ class Listener(lefListener):
             p.antennaDiffArea = float(str(ctx.children[1]))
 
         # TODO: The rest
+
+    def enterPin_direction(self, ctx: lefParser.Pin_directionContext):
+        direction = str(ctx.children[0])
+        tristate = None
+        if direction == "OUTPUT":
+            tristate = len(ctx.children) > 1 and str(ctx.children[1]) == "TRISTATE"
+        self.pin.direction = direction
+        self.pin.tristate = tristate
 
     def exitPin_declaration(self, ctx: lefParser.Pin_declarationContext):
         if str(ctx.children[-1]) != self.pin.name:

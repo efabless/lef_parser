@@ -153,6 +153,7 @@ KW_Milliamps: 'MILLIAMPS';
 KW_Input: 'INPUT';
 KW_Output: 'OUTPUT';
 KW_Inout: 'INOUT';
+KW_Tristate: 'TRISTATE';
 KW_Use: 'USE';
 KW_Shape: 'SHAPE';
 KW_Abutment: 'ABUTMENT';

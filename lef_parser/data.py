@@ -24,7 +24,8 @@ class Layer:
 @dataclass
 class Pin:
     name: str
-    direction: Literal["INPUT", "OUTPUT", "INOUT"] = "INOUT"
+    direction: Literal["INPUT", "OUTPUT", "INOUT", "FEEDTHRU"] = "INOUT"
+    tristate: Optional[bool] = None
     kind: Literal["SIGNAL", "CLOCK", "POWER", "GROUND"] = "SIGNAL"
     antennaGateArea: Optional[float] = None
     antennaDiffArea: Optional[float] = None
@@ -37,6 +38,7 @@ class Pin:
 class Port:
     name: str
     direction: Literal["INPUT", "OUTPUT", "INOUT"] = "INOUT"
+    tristate: Optional[bool] = None
     kind: Literal["SIGNAL", "CLOCK", "POWER", "GROUND"] = "SIGNAL"
     msb: Optional[int] = None
     lsb: Optional[int] = None
@@ -102,7 +104,12 @@ class LEF:
             ), f"Pin {pin.name} was not properly processed"
             port = ports.get(
                 pin.basename,
-                Port(name=pin.basename, direction=pin.direction, kind=pin.kind),
+                Port(
+                    name=pin.basename,
+                    direction=pin.direction,
+                    kind=pin.kind,
+                    tristate=pin.tristate,
+                ),
             )
             if pin.index is not None:
                 port.msb = max(pin.index, port.msb or 0)

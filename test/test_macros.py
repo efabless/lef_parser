@@ -2,7 +2,7 @@ import os
 import pytest
 
 
-def test_sky_basic():
+def test_spm():
     from lef_parser import parse_files
 
     lef = parse_files(
@@ -66,3 +66,17 @@ def test_sky_basic():
                 "POWER",
                 "GROUND",
             ], f"Failed to extract kind for {pin.name}"
+
+
+def test_tristate():
+    from lef_parser import parse_files
+
+    lef = parse_files(
+        [
+            os.path.join(pytest.test_root, "files", "tristate_example.lef"),
+        ]
+    )
+
+    for pin in lef.macros["user_proj_example"].pins.values():
+        if pin.direction == "OUTPUT":
+            assert pin.tristate, f"Pin {pin.name} not correctly parsed as tristate"

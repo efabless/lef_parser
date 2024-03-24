@@ -324,12 +324,18 @@ symmetry:
 pin_declaration: KW_Pin Name pin_property* KW_End Name;
 
 pin_property:
-	KW_Direction (KW_Input | KW_Output | KW_Inout) Semicolon
+	KW_Direction pin_direction Semicolon
 	| KW_Use (KW_Power | KW_Ground | KW_Clock | KW_Signal) Semicolon
 	| KW_Shape KW_Abutment Semicolon
 	| KW_AntennaGateArea Number Semicolon
 	| KW_AntennaDiffArea Number Semicolon
 	| KW_Port macro_layer_declaration* KW_End;
+
+pin_direction:
+	KW_Input
+	| KW_Output (KW_Tristate)?
+	| KW_Inout
+	| KW_Feedthru;
 
 obs_declaration: KW_Obs macro_layer_declaration* KW_End;
 
