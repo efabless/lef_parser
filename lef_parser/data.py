@@ -11,8 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import re
 from dataclasses import dataclass, field
-from typing import Literal, Optional, Dict, Set, Tuple
+from typing import List, Literal, Optional, Dict, Set, Tuple
 
 
 @dataclass
@@ -27,6 +28,9 @@ class Pin:
     kind: Literal["SIGNAL", "CLOCK", "POWER", "GROUND"] = "SIGNAL"
     antennaGateArea: Optional[float] = None
     antennaDiffArea: Optional[float] = None
+
+    basename: Optional[str] = None
+    indices: Optional[Tuple[int, ...]] = None
 
 
 @dataclass
@@ -63,3 +67,21 @@ class LEF:
     dividerchar: str = "/"
     layers: Dict[str, Layer] = field(default_factory=lambda: {})
     macros: Dict[str, Macro] = field(default_factory=lambda: {})
+
+    def __post_init__(self):
+        self.update_busbitchars(self.busbitchars)
+
+    def update_busbitchars(self, busbitchars: str):
+        self.busbitchars = busbitchars
+        self._busbitchars_rx = re.compile(
+            rf"{re.escape(self.busbitchars[0])}(\d+){re.escape(self.busbitchars[1])}$"
+        )
+
+    def process_pin(self, pin: Pin):
+        indices: List[str] = []
+        basename = pin.name
+        while match := self._busbitchars_rx.search(basename):
+            indices.append(int(match[1]))
+            basename = self._busbitchars_rx.sub("", basename)
+        pin.basename = basename
+        pin.indices = tuple(reversed(indices))

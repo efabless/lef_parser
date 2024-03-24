@@ -179,14 +179,14 @@ class Listener(lefListener):
 
     @property
     def pin(self):
-        assert self.pin is not None
-        return self.pin
+        assert self.current_pin is not None
+        return self.current_pin
 
     def exitVersion_statement(self, ctx: lefParser.Version_statementContext):
         self.lef.version = str(ctx.children[1])
 
     def exitBusbitchar_statement(self, ctx: lefParser.Busbitchar_statementContext):
-        self.lef.busbitchars = str(ctx.children[1])[1:-1]
+        self.lef.update_busbitchars(str(ctx.children[1])[1:-1])
 
     def exitDividerchar_statement(self, ctx: lefParser.Dividerchar_statementContext):
         self.lef.dividerchar = str(ctx.children[1])[1:-1]
@@ -246,6 +246,7 @@ class Listener(lefListener):
             raise ValueError(
                 f"Error: mismatched END for macro {self.pin.name}: '{str(ctx.children[-1])}'"
             )
+        self.lef.process_pin(self.pin)
         self.current_pin = None
 
     def syntaxError(
