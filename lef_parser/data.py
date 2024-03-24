@@ -13,7 +13,7 @@
 # limitations under the License.
 import re
 from dataclasses import dataclass, field
-from typing import List, Literal, Optional, Dict, Set, Tuple
+from typing import Literal, Optional, Dict, Set, Tuple
 
 
 @dataclass
@@ -30,7 +30,16 @@ class Pin:
     antennaDiffArea: Optional[float] = None
 
     basename: Optional[str] = None
-    indices: Optional[Tuple[int, ...]] = None
+    index: Optional[int] = None
+
+
+@dataclass
+class Port:
+    name: str
+    direction: Literal["INPUT", "OUTPUT", "INOUT"] = "INOUT"
+    kind: Literal["SIGNAL", "CLOCK", "POWER", "GROUND"] = "SIGNAL"
+    msb: Optional[int] = None
+    lsb: Optional[int] = None
 
 
 @dataclass
@@ -43,6 +52,7 @@ class Macro:
     size: Tuple[float, float] = (0, 0)
     symmetry: Set[Literal["X", "Y", "R90"]] = field(default_factory=lambda: set())
     pins: Dict[str, Pin] = field(default_factory=lambda: {})
+    ports: Dict[str, Port] = field(default_factory=lambda: {})
 
 
 @dataclass
@@ -78,10 +88,24 @@ class LEF:
         )
 
     def process_pin(self, pin: Pin):
-        indices: List[str] = []
         basename = pin.name
-        while match := self._busbitchars_rx.search(basename):
-            indices.append(int(match[1]))
+        if match := self._busbitchars_rx.search(basename):
+            pin.index = int(match[1])
             basename = self._busbitchars_rx.sub("", basename)
         pin.basename = basename
-        pin.indices = tuple(reversed(indices))
+
+    def process_macro(self, macro: Macro):
+        ports: Dict[str, Port] = {}
+        for pin in macro.pins.values():
+            assert (
+                pin.basename is not None
+            ), f"Pin {pin.name} was not properly processed"
+            port = ports.get(
+                pin.basename,
+                Port(name=pin.basename, direction=pin.direction, kind=pin.kind),
+            )
+            if pin.index is not None:
+                port.msb = max(pin.index, port.msb or 0)
+                port.lsb = min(pin.index, port.lsb or 0)
+            ports[pin.basename] = port
+        macro.ports = ports

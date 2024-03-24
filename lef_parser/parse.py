@@ -220,6 +220,7 @@ class Listener(lefListener):
             raise ValueError(
                 f"Error: mismatched END for macro {self.macro.name}: '{str(ctx.children[-1])}'"
             )
+        self.lef.process_macro(self.macro)
         self.current_macro = None
 
     def enterPin_declaration(self, ctx: lefParser.Pin_declarationContext):
