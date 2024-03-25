@@ -15,8 +15,8 @@ lint: venv/manifest.txt
 	./venv/bin/flake8 .
 	./venv/bin/mypy --check-untyped-defs .
 
-antlr: _lef_parser_antlr/lefLexer.py
-_lef_parser_antlr/lefLexer.py: lefLexer.g lef.g
+antlr: _lef_parser_antlr/lefParser.py
+_lef_parser_antlr/lefParser.py: lefLexer.g lef.g
 	$(ANTLR4) -Dlanguage=Python3 -o $(@D) $^
 
 venv: venv/manifest.txt
