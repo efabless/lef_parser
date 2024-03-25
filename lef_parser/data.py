@@ -37,7 +37,7 @@ class Pin:
 @dataclass
 class Port:
     name: str
-    direction: Literal["INPUT", "OUTPUT", "INOUT"] = "INOUT"
+    direction: Literal["INPUT", "OUTPUT", "INOUT", "FEEDTHRU"] = "INOUT"
     tristate: Optional[bool] = None
     kind: Literal["SIGNAL", "CLOCK", "POWER", "GROUND"] = "SIGNAL"
     msb: Optional[int] = None
