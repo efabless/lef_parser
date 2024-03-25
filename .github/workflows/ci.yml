@@ -18,44 +18,44 @@ jobs:
         run: make venv
       - name: Lint
         run: make lint
-  # push_to_pypi:
-  #   name: Build (and publish, if applicable)
-  #   runs-on: ubuntu-22.04
-  #   needs: lint_python
-  #   steps:
-  #     - name: Check out Git repository
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Export Repo URL
-  #       run: echo "REPO_URL=https://github.com/${{ github.repository }}" >> $GITHUB_ENV
-  #     - name: Export Branch Name
-  #       run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-  #     - name: Set Up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.8"
-  #     - name: Install Dependencies
-  #       run: |
-  #         sudo apt-get install -y antlr4
-  #         curl -LO https://github.com/antlr/website-antlr4/raw/gh-pages/download/antlr-4.10.1-complete.jar
-  #     - name: Build Distribution
-  #       run: make ANTLR4="java -jar antlr-4.10.1-complete.jar"
-  #     - name: Set default for env.NEW_TAG
-  #       run: echo "NEW_TAG=NO_NEW_TAG" >> $GITHUB_ENV
-  #     - name: Check for new version
-  #       if: ${{ env.BRANCH_NAME == 'main' }}
-  #       run: |
-  #         make venv
-  #         cd ${GITHUB_WORKSPACE}/ && ./venv/bin/python3 .github/scripts/generate_tag.py
-  #     - name: Tag Commit
-  #       if: ${{ env.NEW_TAG != 'NO_NEW_TAG' }}
-  #       uses: tvdias/github-tagger@v0.0.1
-  #       with:
-  #         tag: "${{ env.NEW_TAG }}"
-  #         repo-token: "${{ secrets.MY_TOKEN }}"
-  #     - name: Publish
-  #       if: ${{ env.NEW_TAG != 'NO_NEW_TAG' }}
-  #       uses: pypa/gh-action-pypi-publish@master
-  #       with:
-  #         password: ${{ secrets.PYPI_API_TOKEN }}
+  push_to_pypi:
+    name: Build (and publish, if applicable)
+    runs-on: ubuntu-22.04
+    needs: lint_python
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Export Repo URL
+        run: echo "REPO_URL=https://github.com/${{ github.repository }}" >> $GITHUB_ENV
+      - name: Export Branch Name
+        run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install -y antlr4
+          curl -LO https://github.com/antlr/website-antlr4/raw/gh-pages/download/antlr-4.10.1-complete.jar
+      - name: Build Distribution
+        run: make ANTLR4="java -jar antlr-4.10.1-complete.jar"
+      - name: Set default for env.NEW_TAG
+        run: echo "NEW_TAG=NO_NEW_TAG" >> $GITHUB_ENV
+      - name: Check for new version
+        if: ${{ env.BRANCH_NAME == 'main' }}
+        run: |
+          make venv
+          cd ${GITHUB_WORKSPACE}/ && ./venv/bin/python3 .github/scripts/generate_tag.py
+      - name: Tag Commit
+        if: ${{ env.NEW_TAG != 'NO_NEW_TAG' }}
+        uses: tvdias/github-tagger@v0.0.1
+        with:
+          tag: "${{ env.NEW_TAG }}"
+          repo-token: "${{ secrets.MY_TOKEN }}"
+      - name: Publish
+        if: ${{ env.NEW_TAG != 'NO_NEW_TAG' }}
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

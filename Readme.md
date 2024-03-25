@@ -1,4 +1,5 @@
-> This repository is a work in progress. Take caution when using these files.
+> This repository is a work in progress. Parts of the LEF syntax may be
+> unsupported.
 
 # LEF Parser
 WIP Antlr4-based Python parser for LEF files.
