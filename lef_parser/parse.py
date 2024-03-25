@@ -14,9 +14,8 @@
 import os
 import sys
 from enum import IntEnum
-from typing import TextIO
 from collections import deque
-from typing import Any, Deque, Optional, Sequence, Tuple, Type, Union
+from typing import Deque, Optional, Sequence, TextIO, Tuple, Type, Union
 
 from _lef_parser_antlr.lefListener import lefListener  # type: ignore
 from _lef_parser_antlr.lefParser import lefParser  # type: ignore
@@ -74,7 +73,9 @@ class Lexer(lefLexer):
         waitingForMatch = 2
 
     def __init__(
-        self, input: Optional[InputStream] = None, output: TextIO | Any = sys.stdout
+        self,
+        input: Optional[InputStream] = None,
+        output: TextIO = sys.stdout,
     ):
         super().__init__(input, output)
 
