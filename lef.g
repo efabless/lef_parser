@@ -1,16 +1,14 @@
 // Copyright 2024 Efabless Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License. You may obtain a copy of the License at
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+// or implied. See the License for the specific language governing permissions and limitations under
+// the License.
 grammar lef;
 
 options {
@@ -33,9 +31,12 @@ statement:
 	| layer_statement
 	| via_statement
 	| macro_statement
-	|
-	// TODO: viarule_statement |
-	viarule_generate_statement;
+	| fixedmask_statement
+	| namescasesensitive_statement
+	// TODO: | viarule_statement
+	| viarule_generate_statement;
+
+fixedmask_statement: KW_FixedMask Semicolon;
 
 nowireextensionatpin_statement:
 	KW_NoWireExtensionAtPin (KW_On | KW_Off) Semicolon;
@@ -58,11 +59,27 @@ ext_statement: KW_BeginExt EM_String extension* EM_KW_EndExt;
 
 extension: EM_Name EM_String;
 
+namescasesensitive_statement:
+	KW_NamesCaseSensitive (KW_On | KW_Off) Semicolon;
+
 // Property Definitions
 propertydefinitions_statement:
 	KW_PropertyDefinitions property_definition* KW_End KW_PropertyDefinitions;
 
-property_definition: KW_Layer Name KW_String Semicolon;
+property_definition:
+	(
+		KW_Layer
+		| KW_Library
+		| KW_Macro
+		| KW_NonDefaultRule
+		| KW_Pin
+		| KW_Via
+		| KW_ViaRule
+	) Name (KW_Integer | KW_Real | KW_String) (
+		(KW_Range Number Number)
+		| Number
+		| String
+	)? Semicolon;
 
 // Units
 units_statement: KW_Units unit_declaration* KW_End KW_Units;

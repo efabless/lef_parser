@@ -1,16 +1,14 @@
 // Copyright 2024 Efabless Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License. You may obtain a copy of the License at
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software distributed under the License
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+// or implied. See the License for the specific language governing permissions and limitations under
+// the License.
 lexer grammar lefLexer;
 
 Comment: '#' ~('\n' | '\r')* '\r'? '\n' -> channel(HIDDEN);
@@ -26,6 +24,9 @@ KW_Macro: 'MACRO';
 KW_Foreign: 'FOREIGN';
 KW_Pin: 'PIN';
 KW_End: 'END';
+KW_Integer: 'INTEGER';
+KW_Real: 'REAL';
+KW_NamesCaseSensitive: 'NAMESCASESENSITIVE';
 
 KW_Version: 'VERSION';
 KW_BusBitChars: 'BUSBITCHARS';
@@ -37,7 +38,7 @@ KW_ClearanceMeasure: 'CLEARANCEMEASURE';
 KW_PropertyDefinitions: 'PROPERTYDEFINITIONS';
 KW_MaxViaStack: 'MAXVIASTACK';
 KW_Generate: 'GENERATE';
-KW_NonDefaultRule: 'NONDEFAULTRULE';
+KW_NonDefaultRule: 'NONDEFAULTRULE' -> pushMode(NAME_MODE);
 KW_BeginExt: 'BEGINEXT' -> pushMode(EXTENSION_MODE);
 KW_Obs: 'OBS';
 KW_Library: 'LIBRARY';
@@ -186,6 +187,7 @@ KW_TopLeft: 'TOPLEFT';
 KW_TopRight: 'TOPRIGHT';
 KW_BottomLeft: 'BOTTOMLEFT';
 KW_BottomRight: 'BOTTOMRIGHT';
+KW_FixedMask: 'FIXEDMASK';
 
 KW_R90: 'R90';
 KW_X: 'X';

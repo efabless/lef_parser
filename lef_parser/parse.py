@@ -44,24 +44,18 @@ class Lexer(lefLexer):
     )
     ANONYMOUS_BLOCKS = set([lefLexer.KW_Port, lefLexer.KW_Obs])
 
-    TOP_LEVEL_BLOCKS = set(
-        [
-            lefLexer.KW_Layer,
-            lefLexer.KW_Site,
-            lefLexer.KW_Macro,
-            lefLexer.KW_Via,
-            lefLexer.KW_ViaRule,
-            lefLexer.KW_Units,
-            lefLexer.KW_PropertyDefinitions,
-        ]
-    )
-    NESTED_BLOCKS = set(
-        [
-            lefLexer.KW_Pin,
-            lefLexer.KW_Port,
-            lefLexer.KW_Obs,
-        ]
-    )
+    BLOCKS = {
+        lefLexer.KW_Layer: {0},
+        lefLexer.KW_Site: {0},
+        lefLexer.KW_Macro: {0},
+        lefLexer.KW_Via: {0},
+        lefLexer.KW_ViaRule: {0},
+        lefLexer.KW_Units: {0},
+        lefLexer.KW_PropertyDefinitions: {0},
+        lefLexer.KW_Pin: {lefLexer.KW_Macro},
+        lefLexer.KW_Port: {lefLexer.KW_Pin},
+        lefLexer.KW_Obs: {lefLexer.KW_Macro},
+    }
 
     NAME_MODE_TOKENS = NAMED_BLOCKS.union(
         set([lefLexer.KW_Foreign, lefLexer.KW_Property])
@@ -98,7 +92,7 @@ class Lexer(lefLexer):
         token = super().nextToken()
         assert isinstance(token, Token)
 
-        # Handle "Waiting" States
+        # Handle "Waiting" Statesp
         if self.block_state == Lexer.BlockState.waitingForName:
             assert self.named_block_kind is not None, "state inconsistent"
             self.block_stack.append((self.named_block_kind, token.text))
@@ -139,10 +133,8 @@ class Lexer(lefLexer):
 
         # If starting a block: add it to the stack
         if (
-            len(self.block_stack) == 1
-            and token.type in self.TOP_LEVEL_BLOCKS
-            or len(self.block_stack) >= 2
-            and token.type in self.NESTED_BLOCKS
+            token.type in self.BLOCKS
+            and self.block_stack[-1][0] in self.BLOCKS[token.type]
         ):
             if token.type in self.NAMED_BLOCKS:
                 self.block_state = Lexer.BlockState.waitingForName
